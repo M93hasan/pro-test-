@@ -33,7 +33,7 @@ function baseDocument(): Document {
       ...DEFAULT_SETTINGS,
       ...source.settings,
       cutHeadMode: 'single',
-      headSpacingMm: 500
+      headSpacingMm: 0
     }
   };
 }
@@ -205,7 +205,10 @@ export default function App() {
     if (!result) return;
 
     try {
-      const placements = expandSynchronizedPlacements(result.placements, document.settings);
+      const noSoftwareOffset = cutHeadMode(document.settings) === 'dual-sync' && headSpacingMm(document.settings) === 0;
+      const placements = noSoftwareOffset
+        ? result.placements
+        : expandSynchronizedPlacements(result.placements, document.settings);
       const world = worldParts(document, { placements });
       const text = exportDXF(document, world, placements, true);
       const suffix = cutHeadMode(document.settings) === 'dual-sync' ? '-cift-kafa' : '-tek-kafa';
@@ -256,10 +259,10 @@ export default function App() {
           </label>
 
           {mode === 'dual-sync' && <label>
-            <span>Kafa aralığı (mm)</span>
+            <span>Kafa X ofseti (mm)</span>
             <input
               type="number"
-              min="0.01"
+              min="0"
               step="1"
               value={headSpacingMm(document.settings)}
               onChange={event => updateSettings({ headSpacingMm: Number(event.target.value) })}
@@ -269,7 +272,7 @@ export default function App() {
           {mode === 'dual-sync' && <div className="info-card">
             <b>Aktif nesting şeridi</b>
             <strong>{laneWidth.toFixed(1)} mm</strong>
-            <small>Kafa 2, aynı hareketi +{headSpacingMm(document.settings)} mm X ofset ile tekrarlar.</small>
+            <small>{headSpacingMm(document.settings) === 0 ? 'Kafa 2 aynı hareketi ek X ofset olmadan tekrarlar.' : <>Kafa 2, aynı hareketi +{headSpacingMm(document.settings)} mm X ofset ile tekrarlar.</>}</small>
           </div>}
         </section>
 
