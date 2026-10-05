@@ -1,0 +1,15 @@
+{
+  "name": "sparrow-web",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "sparrow_web_bg.wasm",
+    "sparrow_web.js",
+    "sparrow_web.d.ts"
+  ],
+  "main": "sparrow_web.js",
+  "types": "sparrow_web.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
