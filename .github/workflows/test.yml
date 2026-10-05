@@ -7,6 +7,10 @@ on:
       - integrate-nesting-v1
   pull_request:
 
+concurrency:
+  group: test-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
