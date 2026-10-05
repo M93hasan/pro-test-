@@ -94,3 +94,26 @@ Serula çekirdeği referans alınan repo:
 Bu yeni çift kafa projesi:
 
 `https://github.com/M93hasan/pro-test-`
+
+
+## Cloudflare Pages ile ücretsiz yayın
+
+Alan adı satın almadan Cloudflare'ın ücretsiz `*.pages.dev` adresi kullanılabilir.
+
+Cloudflare dashboard:
+
+1. **Workers & Pages**
+2. **Create application**
+3. **Pages**
+4. **Import an existing Git repository**
+5. GitHub reposu: `M93hasan/pro-test-`
+6. Production branch: `main`
+7. Framework preset: **React (Vite)**
+8. Build command: `npm run build`
+9. Build output directory: `dist`
+10. Root directory: boş bırak / repository root
+11. **Save and Deploy**
+
+Node.js sürümü repository kökündeki `.nvmrc` ile **22** olarak sabitlenmiştir.
+
+İlk başarılı deploy'dan sonra Cloudflare ücretsiz bir `<proje-adı>.pages.dev` adresi verir. `main` dalına gelen yeni commitler otomatik olarak yeniden deploy edilir.
