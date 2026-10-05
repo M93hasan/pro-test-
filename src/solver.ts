@@ -27,8 +27,7 @@ type SolverMessage =
       };
     }
   | { type: 'finished'; documentRevision: number }
-  | { type: 'error'; documentRevision: number; message: string }
-  | { type: string; documentRevision: number; [key: string]: unknown };
+  | { type: 'error'; documentRevision: number; message: string };
 
 export type NestingController = {
   cancel: () => void;
