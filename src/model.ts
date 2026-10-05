@@ -29,7 +29,7 @@ export type Validation = { status: 'pending' | 'passed' | 'failed'; source?: 'so
 export type Result = { documentRevision: number; solverRevision: string; seed: string;
   elapsedSeconds: number; usedLengthMm: number; sheetCount?: number; placements: Placement[]; validation: Validation };
 export type Project = Document & { schemaVersion: 1; revision: number; result?: Result };
-export const DEFAULT_SETTINGS: Settings = { startCorner: 'right-bottom', materialType: 'roll', materialWidthMm: 1400, clearanceMm: 0, timeLimitSeconds: 30, cutHeadMode: 'single', headSpacingMm: 500 };
+export const DEFAULT_SETTINGS: Settings = { startCorner: 'right-bottom', materialType: 'roll', materialWidthMm: 1400, clearanceMm: 0, timeLimitSeconds: 30, cutHeadMode: 'single', headSpacingMm: 0 };
 export const SOLVER_REVISION = '5901a79b6c5a74d8b9c356ee2916736567308108';
 export const LIMITS = { copies: 500, verticesPerPart: 5000, verticesTotal: 100000, extent: 100000 };
 export const POLICY = { linearMm: 1e-6, overlapMm2: 1e-8, angleDeg: 1e-4 };
