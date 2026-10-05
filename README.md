@@ -1,40 +1,96 @@
-# Serula Dual Head Prototype
+# Serula Dual Head — Sürüm 1
+
+Senkron çalışan **tek kafa / çift kafa** lazer-CNC nesting uygulaması.
+
+Bu proje `M93hasan/nesting` içindeki gerçek Serula geometri, DXF ve Sparrow/WASM nesting çekirdeğini kullanır; kaynak `nesting` reposu değiştirilmez.
 
 ## Sürüm
 
-**1** (package: 1.0.0)
-
-Bu repo, senkron çalışan çift kesim kafalı makine için Serula uyarlamasının başlangıç projesidir.
+**1** — package version: **1.0.0**
 
 ## Makine modları
 
-- Tek kafa
-- Çift kafa – senkron
+### Tek kafa
 
-Çift kafa modunda ikinci kafa, birinci kafanın yaptığı aynı hareketi aynı açıyla uygular. İkinci kafanın fiziksel kesim konumu X ekseninde kafa aralığı kadar ötelenir:
+Standart Serula nesting davranışı kullanılır.
 
-    Kafa 1: X
-    Kafa 2: X + kafaAraligi
+### Çift kafa – senkron
 
-Nesting ve doğrulama yalnızca ana yerleşimi değil, iki kafanın oluşturduğu bütün fiziksel kesimleri kontrol eder.
+İki kafa aynı hareketi, aynı Y konumunu ve aynı dönüş açısını kullanır.
 
-## İlk sürüm
+```text
+Kafa 1: X
+Kafa 2: X + kafaAralığı
+```
 
-- Kesim kafası seçimi
-- Ayarlanabilir kafa aralığı
-- Senkron ikinci kafa geometrisinin üretilmesi
-- Malzeme sınırı kontrolü
-- Kafalar ve yerleşimler arası çakışma kontrolü
-- Canlı SVG önizleme
-- Tek kafa davranışının korunması
+Kafa aralığı kullanıcı tarafından milimetre cinsinden ayarlanır.
 
-## Çalıştırma
+Sparrow, Kafa 1 için güvenli çalışma şeridinde nesting yapar:
 
-    npm install
-    npm run dev
+```text
+güvenli şerit = min(kafa aralığı, malzeme genişliği - kafa aralığı)
+```
 
-Test:
+Bu sayede ikinci kafanın senkron kopyası malzeme dışına taşmadan ayrı fiziksel şeritte kalır.
 
-    npm test
+> Sürüm 1'de parça adedi **kesim hareketi adedi** olarak değerlendirilir. Çift kafa modunda her hareket iki fiziksel parça üretir. Örneğin 10 hareket = 20 fiziksel kesim.
 
-Bu repo M93hasan/nesting reposundan ayrıdır. Orijinal tek kafa projesine dokunulmaz.
+## Gerçek üretim akışı
+
+1. DXF dosyasını aç.
+2. Tek kafa veya Çift kafa – senkron seç.
+3. Çift kafada kafa aralığını gir.
+4. Rulo veya plaka malzeme ölçülerini ayarla.
+5. **Nest** ile Sparrow/WASM motorunu çalıştır.
+6. Kafa 1 ve Kafa 2 sonuçlarını önizle.
+7. **DXF İndir** ile üretim dosyasını oluştur.
+
+## DXF
+
+Serula kaynak DXF mantığı korunur:
+
+- LINE
+- ARC
+- CIRCLE
+- SPLINE
+- LWPOLYLINE / POLYLINE
+- iç boşluklar
+- bağlı detaylar ve yardımcı işaretler
+
+Export sırasında mümkün olduğunda orijinal DXF entity tipi korunur; nesting için kullanılan polygonlaştırılmış geometri üretim DXF'ine zorla yazılmaz.
+
+## Plaka modu
+
+Plaka modu aynı Sparrow nesting yolunu kullanır. Taşan yerleşimler Plaka 2, Plaka 3… olarak devam eder.
+
+DXF export'ta plakalar tek dosyada yan yana çıkar ve plaka arası yatay boşluk **50 mm**'dir.
+
+## Teknoloji
+
+- React 19
+- TypeScript
+- Vite 6
+- Sparrow / Jagua Rust + WebAssembly
+- DXF parser
+- polygon-clipping / robust-predicates
+
+## Geliştirme
+
+```bash
+npm install
+npm test
+npm run build
+npm run dev
+```
+
+GitHub Actions her push'ta test ve production build kontrolü yapar.
+
+## Kaynak referans
+
+Serula çekirdeği referans alınan repo:
+
+`https://github.com/M93hasan/nesting`
+
+Bu yeni çift kafa projesi:
+
+`https://github.com/M93hasan/pro-test-`
