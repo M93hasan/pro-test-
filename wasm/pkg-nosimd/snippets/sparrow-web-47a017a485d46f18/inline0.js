@@ -1,0 +1,1 @@
+export function capture_log(line) { globalThis.postMessage({type: 'solver-log', line, timestamp: performance.timeOrigin + performance.now()}); }
