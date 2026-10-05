@@ -1,5 +1,9 @@
 # Serula Dual Head Prototype
 
+## Sürüm
+
+**1** (package: 1.0.0)
+
 Bu repo, senkron çalışan çift kesim kafalı makine için Serula uyarlamasının başlangıç projesidir.
 
 ## Makine modları
