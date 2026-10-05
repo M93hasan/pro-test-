@@ -46,7 +46,7 @@ export default function App() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
   const [revision, setRevision] = useState(1);
-  const controller = useRef<NestingController>();
+  const controller = useRef<NestingController | undefined>(undefined);
 
   useEffect(() => () => controller.current?.cancel(), []);
 
