@@ -261,7 +261,7 @@ export function importDXF(text:string,fileName:string,options:DXFOptions):Import
   const source=scan(text),{records,units}=source,parsed=parseString(source.text) as DxfFile;
   const unitScales:Record<number,number>={1:25.4,2:304.8,4:1,5:10,6:1000,7:1_000_000,9:.0254,10:914.4,13:.001,14:100,15:10000};
   const scale=unitScales[units]??1,warnings:string[]=[],issues:string[]=[],unsupported=new Map<string,number>();
-  warnings.push(unitScales[units]?`DXF INSUNITS ${units}: one unit = ${scale} mm.`:`DXF INSUNITS ${units} eksik veya desteklenmiyor. Ölçüyü değiştirmemek için 1 çizim birimi = 1 mm kabul edildi.`);
+  if(units!==4) warnings.push(unitScales[units]?`DXF INSUNITS ${units}: one unit = ${scale} mm.`:`DXF INSUNITS ${units} eksik veya desteklenmiyor. Ölçüyü değiştirmemek için 1 çizim birimi = 1 mm kabul edildi.`);
   const byHandle=new Map(records.map(r=>[r.id,r])),blocks=new Map(parsed.blocks.map(b=>[b.name,b]));
   const supported=['LINE','ARC','CIRCLE','ELLIPSE','LWPOLYLINE','POLYLINE','SPLINE','INSERT','POINT','TEXT','MTEXT'];
   for(const r of records)if(!supported.includes(r.type)&&!['BLOCK','ENDBLK'].includes(r.type))unsupported.set(r.type,(unsupported.get(r.type)??0)+1);
