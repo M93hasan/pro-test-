@@ -69,23 +69,23 @@ export default function App() {
   );
 
   const previewPlacements = useMemo(() => {
-    if (!result) return [];
-    const sheetMode = document.settings.materialType === 'sheet';
+    const sourcePlacements = result ? physicalPlacements : (document.placements ?? []);
+    const sheetMode = !!result && document.settings.materialType === 'sheet';
     const pitch = document.settings.materialWidthMm + 50;
-    return physicalPlacements.map(placement => ({
+    return sourcePlacements.map(placement => ({
       ...placement,
       xMm: placement.xMm + (sheetMode ? (placement.sheetIndex ?? 0) * pitch : 0)
     }));
-  }, [document.settings.materialType, document.settings.materialWidthMm, physicalPlacements, result]);
+  }, [document.placements, document.settings.materialType, document.settings.materialWidthMm, physicalPlacements, result]);
 
   const previewWorld = useMemo(() => {
-    if (!result) return [];
+    if (!previewPlacements.length) return [];
     try {
       return worldParts(document, { placements: previewPlacements });
     } catch {
       return [];
     }
-  }, [document, previewPlacements, result]);
+  }, [document, previewPlacements]);
 
   const previewSize = useMemo(() => {
     const width = document.settings.materialWidthMm;
@@ -128,6 +128,9 @@ export default function App() {
         enclosed: 'holes'
       });
 
+      if (!review.document.parts.length) {
+        throw new Error(review.issues?.[0] || 'DXF içinde kapalı kesim konturu bulunamadı.');
+      }
       setWarnings(review.warnings);
       setDocument(current => ({
         ...review.document,
@@ -404,7 +407,7 @@ export default function App() {
               const points = part.outer
                 .map(([x, y]) => x + ',' + (previewSize.height - y))
                 .join(' ');
-              const head = physicalPlacements[index]?.headIndex ?? 0;
+              const head = result ? (physicalPlacements[index]?.headIndex ?? 0) : 0;
               return <polygon
                 key={index}
                 points={points}
@@ -421,9 +424,13 @@ export default function App() {
           {result && <span>Kullanılan uzunluk: {result.usedLengthMm.toFixed(1)} mm</span>}
         </div>
 
-        {!result && <div className="empty-state">
+        {!result && !previewWorld.length && <div className="empty-state">
           <strong>Üretim akışı hazır</strong>
           <p>DXF dosyasını aç, makine modunu seç ve Nest düğmesine bas.</p>
+        </div>}
+        {!result && previewWorld.length > 0 && <div className="empty-state">
+          <strong>DXF açıldı</strong>
+          <p>{document.parts.length} parça içe aktarıldı. Şimdi makine ayarlarını kontrol edip Nest düğmesine bas.</p>
         </div>}
       </section>
     </section>
