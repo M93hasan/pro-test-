@@ -70,9 +70,25 @@ describe('synchronized dual-head machine model', () => {
     expect(placements[0].xMm).toBe(120);
   });
 
-  it('rejects impossible head spacing', () => {
+  it('allows zero software offset and uses the full material width', () => {
+    const zeroOffset = { ...document.settings, headSpacingMm: 0 };
+    expect(validateMachineSettings(zeroOffset)).toHaveLength(0);
+    expect(effectiveNestingWidth(zeroOffset)).toBe(1400);
+    const placements = expandSynchronizedPlacements([{
+      partId: 'p1',
+      copyIndex: 0,
+      xMm: 120,
+      yMm: 45,
+      angleDeg: 0
+    }], zeroOffset);
+    expect(placements).toHaveLength(2);
+    expect(placements[0].xMm).toBe(120);
+    expect(placements[1].xMm).toBe(120);
+  });
+
+  it('rejects impossible positive head spacing', () => {
     expect(validateMachineSettings({ ...document.settings, headSpacingMm: 1400 }).length).toBeGreaterThan(0);
-    expect(validateMachineSettings({ ...document.settings, headSpacingMm: 0 }).length).toBeGreaterThan(0);
+    expect(validateMachineSettings({ ...document.settings, headSpacingMm: -1 }).length).toBeGreaterThan(0);
   });
 
   it('counts two physical outputs per synchronized cutting motion', () => {
