@@ -10,7 +10,7 @@ export function cutHeadMode(settings: Settings) {
 }
 
 export function headSpacingMm(settings: Settings) {
-  return settings.headSpacingMm ?? 500;
+  return settings.headSpacingMm ?? 0;
 }
 
 export function validateMachineSettings(settings: Settings): string[] {
@@ -20,10 +20,10 @@ export function validateMachineSettings(settings: Settings): string[] {
   const spacing = headSpacingMm(settings);
   const errors: string[] = [];
 
-  if (!Number.isFinite(spacing) || spacing <= 0) {
-    errors.push('Çift kafa modunda kafa aralığı 0 mm’den büyük olmalıdır.');
+  if (!Number.isFinite(spacing) || spacing < 0) {
+    errors.push('Çift kafa modunda kafa ofseti negatif olamaz.');
   }
-  if (Number.isFinite(width) && spacing >= width) {
+  if (Number.isFinite(width) && spacing > 0 && spacing >= width) {
     errors.push('Kafa aralığı malzeme genişliğinden küçük olmalıdır.');
   }
   if (Number.isFinite(width) && width > 0 && spacing > 0 && spacing < width) {
@@ -41,6 +41,7 @@ export function effectiveNestingWidth(settings: Settings): number {
   if (errors.length) throw new Error(errors[0]);
 
   const spacing = headSpacingMm(settings);
+  if (spacing === 0) return settings.materialWidthMm;
   return Math.min(spacing, settings.materialWidthMm - spacing);
 }
 
